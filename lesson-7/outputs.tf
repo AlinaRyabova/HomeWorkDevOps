@@ -1,6 +1,9 @@
 #Загальні виводи ресурсів
 
-
+output "s3_bucket_name" {
+  description = "S3 bucket name for Terraform state"
+  value       = module.s3_backend.bucket_name
+}
 
 output "vpc_id" {
   description = "VPC ID"
