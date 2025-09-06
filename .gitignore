@@ -27,3 +27,60 @@ media/
 # System files
 .DS_Store
 Thumbs.db
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+*.log
+*.pot
+*.pyc
+*.swp
+.env
+/staticfiles
+/media
+# .gitignore
+.env
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+*.log
+staticfiles/
+
+# Terraform state files
+*.tfstate
+*.tfstate.backup
+
+# Terraform crash logs
+crash.log
+
+# Override files created by Terraform
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# CLI configuration files
+.terraformrc
+terraform.rc
+
+# Local .terraform directory (modules and plugins)
+.terraform/
+
+# Sensitive variable files
+*.tfvars
+*.tfvars.json
+
+# AWS credentials (якщо випадково є локально)
+*.aws/credentials
+*.aws/config
+
+# OS/IDE specific
+.DS_Store
+.vscode/
+*.swp
+
