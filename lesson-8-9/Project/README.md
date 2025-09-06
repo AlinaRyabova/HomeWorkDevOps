@@ -102,18 +102,18 @@ value = var.use_aurora ? aws_rds_cluster.aurora[0].endpoint : aws_db_instance.st
 
 ## Kоманди Terraform
 
-# Ініціалізація
+1. Ініціалізація
 
 terraform init
 
-# Перевірка плану
+2. Перевірка плану
 
 terraform plan
 
-# Створення ресурсів
+3. Створення ресурсів
 
 terraform apply
 
-# Після завершення
+4. Після завершення
 
 terraform output rds_endpoint
