@@ -116,27 +116,24 @@ terraform init
 # Перевірка синтаксису Terraform
 terraform validate
 
+```
 
-terraform plan
+#### Крок 2: Розгортання інфраструктури
 
-Крок 2: Розгортання інфраструктури
-Виконайте команду terraform apply для створення всіх ресурсів в AWS:
-
-
+Спочатку виконайте команду terraform plan
+Потім команду terraform apply для створення всіх ресурсів в AWS:
 
 terraform apply -auto-approve
 Після завершення розгортання оновіть файл kubeconfig та перевірте стан вузлів кластера:
 
-
-
 aws eks update-kubeconfig --region <your-region> --name <your-cluster-name>
 kubectl get nodes
 
-Крок 3: Доступ до сервісів
+#### Крок 3: Доступ до сервісів
+
 Використовуйте kubectl port-forward для доступу до веб-інтерфейсів, які працюють всередині Kubernetes:
 
 Jenkins:
-
 
 kubectl get all -n jenkins
 kubectl port-forward svc/jenkins 8080:8080 -n jenkins
@@ -144,25 +141,27 @@ kubectl port-forward svc/jenkins 8080:8080 -n jenkins
 
 Argo CD:
 
-
 kubectl get all -n argocd
 kubectl port-forward svc/argocd-server 8081:443 -n argocd
 Argo CD буде доступний за адресою https://localhost:8081.
 
 Grafana:
 
-
 kubectl get all -n monitoring
 kubectl port-forward svc/grafana 3000:80 -n monitoring
 Grafana буде доступна за адресою http://localhost:3000.
 
-Крок 4: Запуск застосунку
+#### Крок 4: Запуск застосунку
+
 Jenkins-pipeline автоматично збереже Docker-образ вашого Django-застосунку, завантажить його в ECR, ініціює GitOps-процес через Argo CD, який розгорне застосунок у кластері EKS з використанням Helm-чарту.
 
-⚠️ Важлива примітка щодо витрат
+#### Крок 5: Завершення
+
 УВАГА! Щоб уникнути непередбачених витрат на хмарні сервіси, обов'язково видаляйте всі створені ресурси після завершення роботи. Виконайте таку команду:
 
-
-terraform destroy -auto-approve
+terraform destroy
 Ця команда видалить усі ресурси, які використовуються для зберігання стану Terraform. Тому, при повторному запуску проєкту, їх потрібно буде створити знову.
+
+```
+
 ```
