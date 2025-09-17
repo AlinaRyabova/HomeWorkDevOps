@@ -1,140 +1,120 @@
-# Final DevOps Project – AWS + Terraform + EKS + CI/CD + Monitoring
+# Final DevOps Project – AWS Infrastructure with Terraform & CI/CD
 
-## Опис проєкту
+### Опис проєкту
 
-Цей проєкт реалізує повний DevOps-процес розгортання веб-застосунку **Django** в AWS з використанням **Terraform**, **EKS**, **RDS**, **ECR**, **Jenkins**, **Argo CD**, **Prometheus** та **Grafana**.  
-Інфраструктура описана як код (**IaC**) і автоматизована через Terraform.
-
----
-
-## 🛠 Використані технології
-
-- **AWS** (VPC, EKS, RDS, ECR, IAM, Security Groups)
-- **Terraform** (IaC)
-- **Helm** (деплой Jenkins, Argo CD, Prometheus, Grafana)
-- **Jenkins** (CI/CD)
-- **Argo CD** (GitOps CD)
-- **Prometheus + Grafana** (моніторинг)
-- **Docker** (контейнеризація Django)
+Цей проєкт демонструє повний цикл **CI/CD (Continuous Integration/Continuous Delivery)** для веб-застосунку на **Django**, розгорнутого в **AWS**. Інфраструктура описана за допомогою **Terraform (Infrastructure as Code)**, що забезпечує її відтворюваність та керованість.
 
 ---
 
-## Структура проєкту
+### Ключові технології
 
-Project/
-│
+| **Категорія**       | **Технологія**       | **Призначення**                                  |
+| :------------------ | :------------------- | :----------------------------------------------- |
+| **Інфраструктура**  | **AWS**              | Хмарна платформа для розгортання ресурсів.       |
+|                     | **Terraform**        | Управління інфраструктурою як кодом (IaC).       |
+|                     | **Kubernetes (EKS)** | Оркестрація контейнерів.                         |
+|                     | **RDS**              | Реляційна база даних для застосунку.             |
+|                     | **ECR**              | Репозиторій для Docker-образів.                  |
+| **CI/CD & GitOps**  | **Jenkins**          | Автоматизація етапів CI/CD.                      |
+|                     | **Argo CD**          | Реалізація GitOps для автоматичного деплою.      |
+| **Моніторинг**      | **Prometheus**       | Збір метрик з Kubernetes.                        |
+|                     | **Grafana**          | Візуалізація метрик та моніторинг стану системи. |
+| **Контейнеризація** | **Docker**           | Контейнеризація Django-застосунку.               |
+
+---
+
+### Структура репозиторію
+
+.
 ├── main.tf # Головний файл для підключення модулів
-├── backend.tf # Налаштування бекенду для стейтів (S3 + DynamoDB)
-├── outputs.tf # Загальні виводи ресурсів
+├── backend.tf # Налаштування віддаленого state'у (S3 + DynamoDB)
+├── outputs.tf # Виводи важливої інформації про ресурси
 │
-├── modules/ # Каталог з усіма модулями
+├── modules/ # Каталог з багаторазовими модулями Terraform
 │ ├── s3-backend/ # Модуль для S3 та DynamoDB
-│ │ ├── s3.tf # Створення S3-бакета
-│ │ ├── dynamodb.tf # Створення DynamoDB
-│ │ ├── variables.tf # Змінні для S3
-│ │ └── outputs.tf # Виведення інформації про S3 та DynamoDB
-│ │
-│ ├── vpc/ # Модуль для VPC
-│ │ ├── vpc.tf # Створення VPC, підмереж, Internet Gateway
-│ │ ├── routes.tf # Налаштування маршрутизації
-│ │ ├── variables.tf # Змінні для VPC
-│ │ └── outputs.tf  
-│ ├── ecr/ # Модуль для ECR
-│ │ ├── ecr.tf # Створення ECR репозиторію
-│ │ ├── variables.tf # Змінні для ECR
-│ │ └── outputs.tf # Виведення URL репозиторію
-│ │
-│ ├── eks/ # Модуль для Kubernetes кластера
-│ │ ├── eks.tf # Створення кластера
-│ │ ├── aws_ebs_csi_driver.tf # Встановлення плагіну csi drive
-│ │ ├── variables.tf # Змінні для EKS
-│ │ └── outputs.tf # Виведення інформації про кластер
-│ │
-│ ├── rds/ # Модуль для RDS
-│ │ ├── rds.tf # Створення RDS бази даних  
-│ │ ├── aurora.tf # Створення aurora кластера бази даних  
-│ │ ├── shared.tf # Спільні ресурси  
-│ │ ├── variables.tf # Змінні (ресурси, креденшели, values)
-│ │ └── outputs.tf  
-│ │
-│ ├── jenkins/ # Модуль для Helm-установки Jenkins
-│ │ ├── jenkins.tf # Helm release для Jenkins
-│ │ ├── variables.tf # Змінні (ресурси, креденшели, values)
-│ │ ├── providers.tf # Оголошення провайдерів
-│ │ ├── values.yaml # Конфігурація jenkins
-│ │ └── outputs.tf # Виводи (URL, пароль адміністратора)
-│ │
-│ └── argo_cd/ # Новий модуль для Helm-установки Argo CD
-│ ├── jenkins.tf # Helm release для Jenkins
-│ ├── variables.tf # Змінні (версія чарта, namespace, repo URL тощо)
-│ ├── providers.tf # Kubernetes+Helm. переносимо з модуля jenkins
-│ ├── values.yaml # Кастомна конфігурація Argo CD
-│ ├── outputs.tf # Виводи (hostname, initial admin password)
-│ └──charts/ # Helm-чарт для створення app'ів
-│ ├── Chart.yaml
-│ ├── values.yaml # Список applications, repositories
-│ └── templates/
-│ ├── application.yaml
-│ └── repository.yaml
-├── charts/
-│ └── django-app/
+│ ├── vpc/ # Модуль для мережевої інфраструктури (VPC)
+│ ├── ecr/ # Модуль для ECR-репозиторію
+│ ├── eks/ # Модуль для Kubernetes (EKS) кластера
+│ ├── rds/ # Модуль для RDS та Aurora
+│ ├── jenkins/ # Модуль для Helm-деплою Jenkins
+│ └── argo_cd/ # Модуль для Helm-деплою Argo CD
+│ └── charts/ # Helm-чарт для Argo CD Applications
+│
+├── charts/ # Helm-чарти для застосунків
+│ └── django-app/ # Chart для розгортання Django
 │ ├── templates/
-│ │ ├── deployment.yaml
-│ │ ├── service.yaml
-│ │ ├── configmap.yaml
-│ │ └── hpa.yaml
 │ ├── Chart.yaml
-│ └── values.yaml # ConfigMap зі змінними середовища
-└──Django
-├── app\
- ├── Dockerfile
-├── Jenkinsfile
-└── docker-compose.yaml
+│ └── values.yaml
+│
+└── Django/ # Каталог з кодом застосунку
+├── app/
+├── Dockerfile # Інструкції для створення Docker-образу
+├── Jenkinsfile # Jenkins Pipeline для CI/CD
+└── docker-compose.yaml # Конфігурація для локальної розробки
 
 ---
 
-## Кроки розгортання
+### Покрокова інструкція
 
-### 1. Підготовка середовища
+#### Крок 1: Підготовка середовища
+
+Переконайтеся, що ви встановили **AWS CLI**, **Terraform**, **kubectl**, **Helm** та **Docker**. Налаштуйте ваші AWS-креденшіали, потім ініціалізуйте Terraform:
 
 ```bash
+# Налаштування AWS CLI
 aws configure
+
+# Ініціалізація Terraform
 terraform init
+
+# Перевірка синтаксису Terraform
 terraform validate
-terraform fmt
-```
+terraform plan
 
-2. Розгортання інфраструктури
-   terraform apply -auto-approve
+Крок 2: Розгортання інфраструктури
+Виконайте команду terraform apply для створення всіх ресурсів в AWS:
 
-Онови kubeconfig і перевір вузли:
 
-aws eks update-kubeconfig --region us-east-1 --name final-eks-cluster
+
+terraform apply -auto-approve
+Після завершення розгортання оновіть файл kubeconfig та перевірте стан вузлів кластера:
+
+
+
+aws eks update-kubeconfig --region <your-region> --name <your-cluster-name>
 kubectl get nodes
 
-3. Jenkins
-   kubectl get all -n jenkins
-   kubectl port-forward svc/jenkins 8080:8080 -n jenkins
+Крок 3: Доступ до сервісів
+Використовуйте kubectl port-forward для доступу до веб-інтерфейсів, які працюють всередині Kubernetes:
 
-4. Argo CD
-   kubectl get all -n argocd
-   kubectl port-forward svc/argocd-server 8081:443 -n argocd
+Jenkins:
 
-5. Моніторинг (Grafana + Prometheus)
-   kubectl get all -n monitoring
-   kubectl port-forward svc/grafana 3000:80 -n monitoring
 
-6. Django-додаток
+kubectl get all -n jenkins
+kubectl port-forward svc/jenkins 8080:8080 -n jenkins
+Після цього Jenkins буде доступний за адресою http://localhost:8080.
 
-Збірка і пуш Docker-образу:
+Argo CD:
 
-aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin <ECR_URL>
 
-docker build -t django-app ./Django
-docker tag django-app:latest <ECR_URL>/django-app:latest
-docker push <ECR_URL>/django-app:latest
+kubectl get all -n argocd
+kubectl port-forward svc/argocd-server 8081:443 -n argocd
+Argo CD буде доступний за адресою https://localhost:8081.
 
-Argo CD автоматично задеплоїть застосунок через Helm-чарт (charts/django-app).
+Grafana:
 
-7. Видалення ресурсів
-   terraform destroy -auto-approve
+
+kubectl get all -n monitoring
+kubectl port-forward svc/grafana 3000:80 -n monitoring
+Grafana буде доступна за адресою http://localhost:3000.
+
+Крок 4: Запуск застосунку
+Jenkins-pipeline автоматично збереже Docker-образ вашого Django-застосунку, завантажить його в ECR, ініціює GitOps-процес через Argo CD, який розгорне застосунок у кластері EKS з використанням Helm-чарту.
+
+⚠️ Важлива примітка щодо витрат
+УВАГА! Щоб уникнути непередбачених витрат на хмарні сервіси, обов'язково видаляйте всі створені ресурси після завершення роботи. Виконайте таку команду:
+
+
+terraform destroy -auto-approve
+Ця команда видалить усі ресурси, які використовуються для зберігання стану Terraform. Тому, при повторному запуску проєкту, їх потрібно буде створити знову.
+```
