@@ -1,4 +1,4 @@
-# Final DevOps Project – AWS Infrastructure with Terraform & CI/CD 🚀
+# Final DevOps Project – AWS Infrastructure with Terraform & CI/CD
 
 ### Опис проєкту
 
@@ -6,7 +6,7 @@
 
 ---
 
-### 🛠 Ключові технології
+### Ключові технології
 
 | **Категорія**        | **Технологія**        | **Призначення**                                   |
 | :------------------- | :-------------------- | :------------------------------------------------ |
