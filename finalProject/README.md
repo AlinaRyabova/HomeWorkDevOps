@@ -117,13 +117,14 @@ terraform validate
 terraform fmt
 -----
 
+```
 #### Крок 2: Розгортання інфраструктури
 
 Спочатку виконайте `terraform plan`, щоб переглянути план розгортання. Потім виконайте `terraform apply` для створення всіх ресурсів в AWS.
 
 ```bash
 terraform plan
-terraform apply -auto-approve
+terraform apply
 ````
 
 Після завершення розгортання оновіть файл `kubeconfig` та перевірте стан вузлів кластера:
